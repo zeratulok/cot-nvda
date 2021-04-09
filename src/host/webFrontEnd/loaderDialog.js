@@ -1,3 +1,4 @@
+import loliPrg from "./demos/loli_harry_potter_prg";
 import hoverBovverPrg from "./demos/hoverbovver_prg";
 import firstPrg       from "./demos/first_prg";
 
@@ -11,21 +12,29 @@ export function initLoaderDialog(nascentC64) {
   c64 = nascentC64;
 
   document
-    .getElementById("hoverBovverButton")
+    .getElementById("loliHarryPotterButton")
     .addEventListener(
       "click",
-      // TODO: reassign joystick to port 1 automatically
-      () => launch("Hover Bovver.prg", hoverBovverPrg)
+      () => launch("Loli Harry Potter.prg", loliPrg)
     )
   ;
 
-  document
-    .getElementById("firstButton")
-    .addEventListener(
-      "click",
-      () => launch("First.prg", firstPrg)
-    )
-  ;
+//  document
+//    .getElementById("hoverBovverButton")
+//    .addEventListener(
+//      "click",
+//      // TODO: reassign joystick to port 1 automatically
+//      () => launch("Hover Bovver.prg", hoverBovverPrg)
+//    )
+//  ;
+//
+//  document
+//    .getElementById("firstButton")
+//    .addEventListener(
+//      "click",
+//      () => launch("First.prg", firstPrg)
+//    )
+//  ;
 }
 
 function launch(filename, bytes) {

@@ -11,7 +11,7 @@ const state = {
 };
 
 // Square waves are as loud as it gets. Dial it down...
-const MASTER_MULTIPLIER = 0.2;
+const MASTER_MULTIPLIER = 0.01;
 
 // Divide hibyte/lobyte frequency by MASTER_TUNING to get Hz.
 // TODO: this isn't accurate. Tables exist which could give a better number,
@@ -176,6 +176,7 @@ if (globalThis.ConstantSourceNode === undefined) {
 function setMasterVolume(byte) {
   // byte is the raw write byte; needs disentangling
   masterGain.gain.value = ((byte & 0xf) / 15) * MASTER_MULTIPLIER;
+//  masterGain.gain.value = ((byte & 0xf) / 15) >> 2; ;
 }
 
 function setVoiceFrequency(voice) {
@@ -319,6 +320,7 @@ export function attach(nascentC64) {
     onRegWrite,
     userDidInteract,
     setUiGain,
+    isMuted
   };
 
   // https://stackoverflow.com/questions/7944460/detect-safari-browser
@@ -362,4 +364,8 @@ function userDidInteract() {
 
 function setUiGain(value) {
   uiGain.gain.value = value; 
+}
+
+function isMuted() {
+  return uiGain.gain.value == 0;
 }

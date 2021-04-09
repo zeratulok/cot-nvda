@@ -4,6 +4,7 @@ import { ingest_d64 }  from "./ingest-d64";
 import { ingest_sid }  from "./ingest-sid";
 import { ingest_tap }  from "./ingest-tap";
 import { ingest_json } from "./ingest-json";
+import { ingest_snapshot } from "./ingest-snapshot";
 
 const ingestors = [
   [/\.prg$/i , ingest_prg  ],
@@ -12,6 +13,7 @@ const ingestors = [
   [/\.sid$/i , ingest_sid  ],
   [/\.tap$/i , ingest_tap  ],
   [/\.json$/i, ingest_json ],
+  [/\.snapshot$/i, ingest_snapshot ],
 ];
 
 export async function ingest(c64, filename, bytes) {
