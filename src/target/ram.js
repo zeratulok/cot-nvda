@@ -34,9 +34,15 @@ export function attach(nascentC64) {
     writeRam,
     vicReadRam,
     vicReadActiveScreen,
-    getVisibleText,
-    dumpScreen,
-    state
+
+    extractVisibleText,
+    getVisibleText, // TODO remove?
+    extractTextFromCoordinates, // don't expose?
+    extractTextFromRow,  // don't expose?
+    extractTextBetweenRows,  // don't expose?
+
+    dumpScreen,  // remove?
+    state  // don't expose?
   };
 
   reset();
@@ -143,15 +149,12 @@ function vicReadActiveScreen() {
     banks[3] = 0x0000;
 
     var actualScreenMemoryAddress = banks[vicBankRegister] + screenMemoryPointer;
-
-    console.log('calculated video memory address = ' + actualScreenMemoryAddress.toString(16));
-
-    //var actualScreen = new Uint8Array(1024);
-    var actualScreen = new Array(1024);
+//    console.log('calculated video memory address = ' + actualScreenMemoryAddress.toString(16));
+    var actualScreen = new Uint8Array(1024);
+//    var actualScreen = new Array(1024);
     for (let i = 0; i < 1024; i ++) {
-        //actualScreen[i] = c64.wires.cpuRead(actualScreenMemoryAddress+i);
-//        actualScreen[i] = c64.wires.cpuRead(actualScreenMemoryAddress+i);
-        actualScreen[i] = state[actualScreenMemoryAddress+i];
+        actualScreen[i] = c64.wires.cpuRead(actualScreenMemoryAddress+i);
+//        actualScreen[i] = state[actualScreenMemoryAddress+i];
     }
 
     return actualScreen;
@@ -162,7 +165,79 @@ var timerId = 0;
 var previousVisibleText = '';
 var pollingFrequencyMs = 1000;
 
-function extractVisibleText(from, lastchar) {
+const cols = 40;
+const rows = 25;
+
+function swapCase(letters){
+    var newLetters = "";
+    for(var i = 0; i<letters.length; i++){
+        if(letters[i] === letters[i].toLowerCase()){
+            newLetters += letters[i].toUpperCase();
+        }else {
+            newLetters += letters[i].toLowerCase();
+        }
+    }
+    //console.log(newLetters);
+    return newLetters;
+}
+
+// row : from 0 to 24
+function extractTextFromRow(row) {
+    var x1 = 0;
+    var y1 = row;
+    var x2 = cols;
+    var y2 = y1+1;
+    // console.log(' x1 = ' + x1 + ' , y1 = '  + y1 + ' , x2 = ' + x2 + ' , y2 = ' + y2);
+    return swapCase(extractTextFromCoordinates(x1, y1, x2, y2)).trim()+' ';
+}
+
+function extractTextBetweenRows(row1, row2) {
+//    var res = '';
+    var res = new Array();
+    for(var i = row1; i<row2; i++) {
+        res.push(extractTextFromRow(i));
+//        res+=extractTextFromRow(i);
+    }
+    return res;
+}
+
+// x2 > x1 and y2 > y1
+// x : from 0 to 39
+// y : from 0 to 24
+function extractTextFromCoordinates(x1, y1, x2, y2) {
+    var actualScreen = c64.ram.vicReadActiveScreen();
+    var chars = '';
+    for(var y = y1; y<y2; y++ ) {
+        for(var x = x1; x<x2; x++ ) {
+            var index = y * cols + x;
+            var byte = actualScreen[index];
+            var char = petsciiToChar[byte];
+            chars+= char;
+
+        }
+    }
+    return chars;
+}
+
+// this is castle of terror specific, TODO remove it from here
+const cursorChar = '←'; // 0x5f = 95
+const returnForMore = "*** RETURN for more *** ";
+function extractVisibleText() {
+    var line1 = extractTextFromRow(19);
+    var line2 = extractTextFromRow(20);
+    var line3 = extractTextFromRow(21);
+    var line4 = extractTextFromRow(22);
+    var line5 = extractTextFromRow(23);
+    var line6 = extractTextFromRow(24);
+
+    if ( line6 === returnForMore ) {
+        return line1 + line2 + line3 + line4 + line5 + line6;
+    }
+    return line1 + line2 + line3 + line4 + line5;
+
+}
+
+function extractVisibleText_old(from, lastchar) {
     if ( typeof from === 'undefined' ) {
         from = 750; // castle of terror text output
     }

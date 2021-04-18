@@ -141,13 +141,14 @@
       </select>
 
 
-      <select id="c64_text1" aria-roledescription="text says"><option id="textonscreen1"></option></select>
-      <select id="c64_text2" aria-roledescription="text says"><option id="textonscreen2"></option></select>
+      <select id="c64_text1" aria-roledescription="a"><option id="textonscreen1"></option></select>
+      <select id="c64_text2" aria-roledescription="a"><option id="textonscreen2"></option></select>
 
-      <input type='text' id='c64input' class='hidden' aria-roledescription="enter" value="commands"></input>
+      <input type='text' id='c64input' class='hidden' aria-roledescription="." value="." aria-label=""></input>
+      <div id='sr-only' aria-live="polite"></div>
 
-      <select id="scopeSelect">
-        <option value="sprites">Type here</option>
+      <select id="scopeSelect" aria-label="">
+        <option value="sprites" aria-label="">.</option>
         <option value="sprites">You should go back with shift tab</option>
         <option value="background">BACKGROUND MODES</option>
         <option value="collision">COLLISION SURFACES</option>

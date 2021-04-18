@@ -53,7 +53,7 @@ let setKeyMatrix = () => {};
    for "r", and we'd be stuck with the "R" on the keyStack.
 */
 
-let keys = {
+let keysWithCtrl = {
     67 : 'c',
     86 : 'v',
     76 : 'l',
@@ -63,7 +63,6 @@ let keys = {
     89 : 'y',
     78 : 'n',
     77 : 'm'
-
 };
 
 let keyStack = [
@@ -97,6 +96,7 @@ export function attach(nascentC64) {
     setSetKeyMatrix,
     cursorsToKeys: true,
     naturalMapping: true,
+    buttonNamesToKeyMatrix,
   };
 
   document.addEventListener("keydown", onKeyDown);
@@ -135,6 +135,7 @@ function onKeyDown(event) {
   // console.log(key);
 
   if ( typeof c64.hooks.isUserChoise === 'function' && c64.hooks.isUserChoise() ) {
+    console.log('in isUserChose mode');
     // yes
     if ( key == 89 && typeof c64.hooks.userPressedY === 'function' ) {
         c64.hooks.userPressedY();
@@ -149,9 +150,9 @@ function onKeyDown(event) {
 
   // Detecting Ctrl
   var ctrl = ev.ctrlKey ? ev.ctrlKey : ((key === 17)  ? true : false);
-  if ( ctrl && typeof keys[key] != 'undefined' ) {
-    console.log('*** key ' + key + ' , ' + ' ctrl + ' + keys[key] + ' is pressed');
-    var fn = c64.hooks['ctrl' + keys[key].toUpperCase() ]
+  if ( ctrl && typeof keysWithCtrl[key] != 'undefined' ) {
+    console.log('*** key ' + key + ' , ' + ' ctrl + ' + keysWithCtrl[key] + ' is pressed');
+    var fn = c64.hooks['ctrl' + keysWithCtrl[key].toUpperCase() ]
     if ( typeof fn === 'function') {
         fn();
     }
