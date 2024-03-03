@@ -53,6 +53,18 @@ let setKeyMatrix = () => {};
    for "r", and we'd be stuck with the "R" on the keyStack.
 */
 
+let keysWithCtrl = {
+    67 : 'c',
+    86 : 'v',
+    76 : 'l',
+    73 : 'i',
+    83 : 's',
+    82 : 'r',
+    89 : 'y',
+    78 : 'n',
+    77 : 'm'
+};
+
 let keyStack = [
   // {
   //   code
@@ -84,11 +96,16 @@ export function attach(nascentC64) {
     setSetKeyMatrix,
     cursorsToKeys: true,
     naturalMapping: true,
+    buttonNamesToKeyMatrix,
   };
 
-  globalThis.addEventListener("keydown", onKeyDown);
-  globalThis.addEventListener("keyup",   onKeyUp);
-  globalThis.addEventListener("blur",    onBlur);
+  document.addEventListener("keydown", onKeyDown);
+  document.addEventListener("keyup",   onKeyUp);
+  document.addEventListener("blur",    onBlur);
+
+//  globalThis.addEventListener("keydown", onKeyDown);
+//  globalThis.addEventListener("keyup",   onKeyUp);
+//  globalThis.addEventListener("blur",    onBlur);
 }
 
 // Called during initialization to tell the keyboard event handler how to send
@@ -110,6 +127,43 @@ function buttonNamesToKeyMatrix(buttonNames) {
 
 
 function onKeyDown(event) {
+  // ---------- ctrl + key hooks
+  // function to check the detection
+  var ev = event || window.event;  // Event object 'ev'
+  var key = ev.which || ev.keyCode; // Detecting keyCode
+
+  // console.log(key);
+
+  if ( typeof c64.hooks.isUserChoise === 'function' && c64.hooks.isUserChoise() ) {
+    console.log('in isUserChose mode');
+    // yes
+    if ( key == 89 && typeof c64.hooks.userPressedY === 'function' ) {
+        c64.hooks.userPressedY();
+    } else if ( typeof c64.hooks.userPressedAnyOther === 'function'  ) {
+        c64.hooks.userPressedAnyOther();
+    }
+
+    c64.hooks.isUserChoise = ()=> { return false; };
+    event.preventDefault();
+    return;
+  }
+
+  // Detecting Ctrl
+  var ctrl = ev.ctrlKey ? ev.ctrlKey : ((key === 17)  ? true : false);
+  if ( ctrl && typeof keysWithCtrl[key] != 'undefined' ) {
+    console.log('*** key ' + key + ' , ' + ' ctrl + ' + keysWithCtrl[key] + ' is pressed');
+    var fn = c64.hooks['ctrl' + keysWithCtrl[key].toUpperCase() ]
+    if ( typeof fn === 'function') {
+        fn();
+    }
+    event.preventDefault();
+    return;
+  }
+
+  if ( key == 13 && typeof c64.hooks.enterPressed === 'function' ) {
+    c64.hooks.enterPressed();
+  }
+
   // Any keypress with the Meta key (cmd/ctrl/...) down isn't for us.
   if (event.metaKey) return;
 

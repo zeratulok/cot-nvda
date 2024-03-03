@@ -25,7 +25,7 @@ import { bringup } from "../target/bringup";
 import { attach as monitor }     from "../monitor";
 import { attach as webFrontEnd } from "../host/webFrontEnd";
 import { attach as dragAndDrop } from "../host/dragAndDrop";
-
+import { attach as screenreaderfunctions } from "../host/screenreaderfunctions";
 
 const c64 = bringup({
   host:   { audio, video, keyboard, joystick },
@@ -34,6 +34,7 @@ const c64 = bringup({
     monitor,
     dragAndDrop,
     webFrontEnd,
+    screenreaderfunctions
   ],
 });
 
@@ -41,10 +42,18 @@ const c64 = bringup({
 c64.vic.showStatic();
 c64.runloop.run();
 
+// loli harry potter
+import { ingest } from "../host/ingest";
+import loliPrg from "../host/webFrontEnd/demos/loli_harry_potter_prg";
+import castleOfTerror from "../host/webFrontEnd/demos/Castle_of_terror_startup_snapshot";
+
 setTimeout(
   () => {
-    c64.runloop.reset();
-    c64.runloop.run();
+//    c64.runloop.reset();
+//    c64.runloop.run();
+//    ingest(c64, ".prg", loliPrg);
+    ingest(c64, "castleOfTerror.snapshot", castleOfTerror);
   },
   1000
 );
+

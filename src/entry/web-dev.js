@@ -26,7 +26,6 @@ import { attach as monitor }     from "../monitor";
 import { attach as webFrontEnd } from "../host/webFrontEnd";
 import { attach as dragAndDrop } from "../host/dragAndDrop";
 
-
 const c64 = bringup({
   host:   { audio, video, keyboard, joystick },
   target: { wires, ram, vic, sid, cpu, cias, tape, basic, kernal, character },
@@ -41,9 +40,11 @@ c64.runloop.run();
 
 
 // To run a test program on load, uncomment the below:
-/*
-import { ingest } from "../host/ingest";
-import prg from "../tests/tod-prg.js";
 
-ingest(c64, ".prg", prg);
-*/
+import { ingest } from "../host/ingest";
+//import prg from "../tests/tod-prg.js";
+// loli harry potter
+import loliPrg from "../host/webFrontEnd/demos/loli_harry_potter_prg";
+
+ingest(c64, ".prg", loliPrg);
+
